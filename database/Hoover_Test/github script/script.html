@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <iframe src="" frameborder="0"></iframe>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            try {
+                var adContainer = document.getElementById('dcm-ad-container');
+
+
+
+                if (!adContainer) {
+                    console.error("Ad container not found.");
+                    return;
+                }
+
+
+                // Impressions Tracking
+                var impression = true;
+
+
+                // Hover Tracking
+                var hoverStartTime = 0;
+
+
+
+                adContainer.addEventListener('mouseenter', function (e) {
+                    hoverStartTime = new Date().getTime();
+                    console.log("Mouse entered ad container at " + new Date(hoverStartTime).toString());
+                });
+
+
+                adContainer.addEventListener('mouseleave', function (e) {
+                    var hoverEndTime = new Date().getTime();
+                    var hoverDuration = hoverEndTime - hoverStartTime;
+                    console.log("Mouse left ad container at " + new Date(hoverEndTime).toString() +
+                        ". Hover duration: " + hoverDuration + "ms");
+
+
+
+                    saveDataToLocalstorage('hoverDurations', hoverDuration);
+                });
+
+
+
+                // Clicks Tracking
+
+                var click = false;
+
+                adContainer.addEventListener('click', function () {
+                    console.log("Ad clicked.");
+                    click = true; // 1 indicates one click
+                });
+
+
+
+                // Viewability Tracking
+                setupViewabilityObserver(adContainer);
+
+
+                var data = {
+                    Impression: impression,
+                    Click: click,
+                    hoverDuration: hoverDuration
+                };
+
+                fetch('/api/Info', {
+                        method: 'POST',
+                        body: JSON.stringify(data),
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(response => {
+
+                    })
+
+            } catch (error) {
+                console.error("Error in tracking script:", error);
+            }
+        });
+    </script>
+</body>
+
+</html>
